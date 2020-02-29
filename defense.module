@@ -1,0 +1,66 @@
+<?php
+/**
+ * Name:  defense_module     V1.0  2/15/20
+ */
+
+require_once "defense_class_arin.php";
+
+use Drupal\defense\ApiArin;
+
+
+function defense_menu() {
+  $items = array();
+
+  $items ['defenseanalysis'] = array (
+    'title' => 'Analyze the reports.',
+    'description' => 'Find evidence of hacking.',
+    'access callback' => TRUE,
+    'page callback' => 'defense_analysis',
+    'file' => 'defense_analysis.php',
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+};
+
+function defense_lookup($ip) {
+  $arinApiObj = new ApiArin();
+  $possibleHack = $arinApiObj->getApiStuff($ip);
+  return $possibleHack;
+}
+
+function defense_sanitize_string($string) {
+  return trim(strip_tags(htmlentities(stripslashes($string),ENT_QUOTES))); 
+}
+
+function defense_debug_msg($msg,$structure) {
+  drupal_set_message("DEBUG ".$msg ,'status');
+  if (!empty($structure)) {
+    drupal_set_message('<pre>'.print_r($structure, true).'</pre>','status');
+  }
+}
+
+
+
+
+
+
+/**
+ * Checks if the given ip-address matches the given range.
+ *
+ * @param $ip
+ *   Black- or whitelisted ip-address range.
+ * @param $current_ip
+ *   Ip to be checked against the list, usually users current ip-address.
+ *
+ * @return
+ *   TRUE if the ip is on the list, FALSE if it is not.
+ */
+function defense_check_range($ip, $current_ip) {
+  $ip = explode('-', $ip);
+  list($lower, $upper) = $ip;
+  $lower_dec = (float) sprintf("%u", ip2long($lower));
+  $upper_dec = (float) sprintf("%u", ip2long($upper));
+  $ip_dec = (float) sprintf("%u", ip2long($current_ip));
+  return (($ip_dec >= $lower_dec) && ($ip_dec <= $upper_dec));
+}
+

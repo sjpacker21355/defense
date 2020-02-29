@@ -1,0 +1,5 @@
+name = defense
+description = "Analyze the attacks on the site to determine who to block."
+core = 7.x
+package = Other
+version = "7.x-1.0"

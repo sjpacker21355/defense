@@ -1,0 +1,60 @@
+<?php
+/*
+ * Name: defense.install  V1.0 2/15/20
+ */
+
+function defense_install() {
+}
+
+function defense_uninstall() {
+  
+  if(db_table_exists('defense_log')) {
+    db_drop_table('defense_log');
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function defense_schema() {
+  $schema = array();
+  $schema['defense_log'] = array(
+    'fields' => array(
+      'index' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'ip' => array(
+        'type' => 'varchar',
+        'length' => 31,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 9,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'source' => array(
+      'type' => 'varchar',
+      'length' => 32,
+      'default' => '',
+    ),
+    'netname' => array(
+      'type' => 'varchar',
+      'length' => 128,
+      'default' => '',
+    ),
+    ),
+    'primary key' => array('index'),
+    'indexes' => array(
+      'index' => array('index'),
+      'type' => array('type'),
+    ),
+  );
+
+
+  return $schema;
+}
