@@ -4,7 +4,7 @@
  * Contains Drupal\defense\WatchHack.
  */
 /*
- * Name: defense_class_watchhack.php   V1.0 2/15/20
+ * Name: defense_class_watchhack.php   V1.0 3/21/20
  *
  */
 namespace Drupal\defense;
@@ -17,13 +17,16 @@ class WatchHack{
   private $types = array(
     'user' => 'user',
     'page' => 'page not found',
+    'denied' => 'access denied',
     'nlp_user' => 'nlp_user',
+    'php' => 'php',
   );
  
   
   public function getWatchHack($type) {
     $query = db_select(self::WATCHDOGTBL, 'r')
-      ->fields('r');
+      ->fields('r')
+      ->condition('type',$this->types[$type]);
     $result = $query->execute();
     $reports = array();
     do {
@@ -39,6 +42,7 @@ class WatchHack{
         $reports[$wid]['type'] = $record['type'];
         $reports[$wid]['message'] = $record['message'];
         $reports[$wid]['hostname'] = $record['hostname'];
+        $reports[$wid]['uid'] = $record['uid'];
         $variables = unserialize($record['variables']);
         
         $reports[$wid]['user'] = NULL;
